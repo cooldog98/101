@@ -9,9 +9,9 @@ function App() {
     <BrowserRouter>
       <Navbar />
       <Routes>
-        <Route path="/" element={<h1>home</h1>} />
-        <Route path="/login" element={<h1>login</h1>} />
-        <Route path="/register" element={<h1>register</h1>} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
   );
