@@ -5,7 +5,7 @@ import { CgCheck } from "react-icons/cg";
 import Footer from "../components/Footer";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { th } from "date-fns/locale";
+import { el, th } from "date-fns/locale";
 import "./datepicker.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { CgClose } from "react-icons/cg";
@@ -123,7 +123,7 @@ function Register() {
         const [numphone, setNumPhone] = useState("");
         const [iserrornumphone, setIsErrorNumPhone] = useState("");
 
-        const vaildPhone = (value) => {
+        const vaildPhone = async (value) => {
             const digital = value.replace(/[^0-9]/g,'').slice(0,10);
             let formatted = digital;
 
@@ -153,12 +153,22 @@ function Register() {
             else {
                 setIsErrorNumPhone("");
             }
-        }
+
+            if (digital.length === 10) {
+                const res = await fetch(`http://127.0.0.1:8000/check-phone/${digital}`);
+                const data = await res.json();
+                if (data.exists) {
+                    setIsErrorNumPhone("เบอร์โทรศัพท์นี้ได้ถูกใช้ลงทะเบียนแล้ว กรุณาเข้าสู่ระบบ");
+                }
+            }
+        };
+
         const [bairthday, setBirthday] = useState(null);
 
         const [email, setEmail] = useState("");
         const [emailError, setEmailError] = useState("");
-        const vaildEmail = (value) => {
+
+        const vaildEmail = async (value) => {
             setEmail(value);
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(value) && value.length > 0) {
@@ -167,7 +177,15 @@ function Register() {
             else {
                 setEmailError("");
             }
-        }
+
+            if (emailRegex.test(value)) {
+                const res = await fetch (`http://127.0.0.1:8000/check-email/${value}`)
+                const data = await res.json();
+                if (data.exists) {
+                    setEmailError("อีเมลนี้ถูกใช้แล้ว");
+                }
+            }
+        };
     
         const [isLandscape, setIsLandscape] = useState(true);
         useEffect(() => {
@@ -191,8 +209,36 @@ function Register() {
         }
         const [agreementscond, setAgreementscond] = useState(false);
 
-        const handleRegister = () => {
-            // Implement login logic here
+        const handleRegister = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        lastname: lastname,
+                        phone: numphone.replace(/-/g, ''),
+                        email: email,
+                        birthday: bairthday.toISOString().split('T')[0],
+                        gender: gender,
+                        pin: pin1,
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success === true) {
+                    sessionStorage.removeItem('registerStep');
+                    navigate('/');
+                }
+                else {
+                    alert(data.message || "เกิดข้อผิดพลาดในการสมัครสมาชิก");
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert("เกิดข้อผิดพลาด กรุณาลองใหม่");
+            }
         };
 
         const [seePin, setSeePin] = useState(false);
@@ -215,7 +261,7 @@ function Register() {
         const [timeOut, setTimeOut] = useState(false);
         useEffect(() => {
             if (step !== 3) return;
-            console.log("step:", step, "time:", time)
+            // console.log("step:", step, "time:", time)
 
             if (time <= 0) {
                 setTimeOut(true);
@@ -491,7 +537,7 @@ function Register() {
                                     {agreementscond && <div><CgCheck className="text-white"/></div>}
                                 </div>
 
-                                <button className="flex flex-wrap items-baseline text-sm gap-x-1"
+                                <div className="flex flex-wrap items-baseline text-sm gap-x-1"
                                     onClick = {() => setAgreementscond(!agreementscond)}
                                 >
                                     <span className="text-black">ฉันยินยอมรับข้อมูลข่าวสาร กิจกรรมส่งเสริมการขายต่างๆ จากสเวนเซ่นส์และ</span>
@@ -514,7 +560,7 @@ function Register() {
                                         นโยบายความเป็นส่วนตัว
                                     </button>
                                     <span className="text-black">เพิ่มเติมได้ที่เว็บไซต์ของบริษัทฯ</span>
-                                </ button>
+                                </ div>
                             </div>
 
                             {openPDPA && (
@@ -677,10 +723,7 @@ function Register() {
                                 <button
                                     className={`w-full h-[6vh] rounded-full font-medium 
                                         ${OTP.length === 6 && time > 0  ? 'bg-red-600 hover:opacity-80 text-white' : 'bg-gray-300 cursor-not-allowed text-gray-400' } mt-4 transition-colors duration-200`}
-                                    onClick={() => {
-                                        sessionStorage.removeItem('registerStep');
-                                        navigate('/');
-                                    }}
+                                    onClick={handleRegister}
                                     disabled={OTP.length !== 6 || time <= 0}
                                 >
                                     ดำเนินการต่อ

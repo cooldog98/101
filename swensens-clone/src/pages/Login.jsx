@@ -5,10 +5,13 @@ import { IoPhonePortraitOutline } from "react-icons/io5";
 import { IoMdMail } from "react-icons/io";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Footer from "../components/Footer";
+import { set } from "date-fns";
+import { is } from "date-fns/locale";
 
 function Login() {
     const navigate = useNavigate();
     const [phonenum, setPhonenum] = useState("");
+
     const [email, setEmail] = useState("");
     const [iserror, setIsError] = useState("");
     const vaildEmail = (value) => {
@@ -50,12 +53,47 @@ function Login() {
     
     const [chooseGmail, setChooseGmail] = useState(false);
 
-    const handleLogin = () => {
-        // Implement login logic here
+    const [clickEmailPin, setClickEmailPin] = useState("");
+
+    const handleLogin = async () => {
+        try {
+            if (isusePhone) {
+                const res_phone = await fetch (`http://127.0.0.1:8000/check-phone/${phonenum.replace(/-/g, '')}`)
+                const data_phone = await res_phone.json();
+                if (!data_phone.exists) {
+                    setIsErrorNumPhone("กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง");
+                    return;
+                }
+            }
+            const res = await fetch('http://127.0.0.1:8000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    phone: isusePhone ? phonenum.replace(/-/g, '') : undefined,
+                    email: !isusePhone ? email : undefined,
+                    pin: !isusePhone ? password : undefined,
+                }),
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                console.log('Login successful:', data);
+                navigate('/');
+            }
+            else {
+                setClickEmailPin("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+            }
+        }
+        catch (error) {
+            setIsError("เกิดข้อผิดพลาด กรุณาลองใหม่");
+        }
+
         console.log("Phone Number:", phonenum);
         console.log("Email:", email);
         console.log("Password:", password);
-        };
+    };
 
     const [isLandscape, setIsLandscape] = useState(true);
     useEffect(() => {
@@ -92,8 +130,12 @@ function Login() {
                                     maxLength={12}
                                     onChange={(e) => vaildPhone(e.target.value)}
                                     required
-                                    className="w-full h-[6vh] rounded-xl border-gray-300 border-2 px-4 mt-2 focus:outline-none focus:ring-2 focus:ring-gray-500 hover:bg-gray-200"
+                                    className={`w-full h-[6vh] rounded-xl ${iserrornumphone ?'border-red-700' : 'border-gray-300'} border-2 px-4 mt-2 focus:outline-none focus:ring-2 focus:ring-gray-500 hover:bg-gray-200`}
                                     placeholder="กรอกเบอร์โทรศัพท์" />
+                                
+                                {iserrornumphone && (
+                                    <span className="text-red-600 text-sm mt-1">{iserrornumphone}</span>
+                                )}
                                 
                                 <button
                                     className={`w-full h-[6vh] rounded-full font-medium 
@@ -118,7 +160,7 @@ function Login() {
                                     value={email}
                                     required
                                     onChange={(e) => vaildEmail(e.target.value)}
-                                    className="w-full h-[6vh] rounded-xl border-gray-300 border-2 px-4 mt-2 focus:outline-none focus:ring-2 focus:ring-gray-500 hover:bg-gray-200"
+                                    className={`w-full h-[6vh] rounded-xl ${clickEmailPin ? 'border-red-700' : 'border-gray-300'} border-2 px-4 mt-2 focus:outline-none focus:ring-2 focus:ring-gray-500 hover:bg-gray-200`}
                                     placeholder="กรอกอีเมลของคุณ"
                                 />
 
@@ -126,7 +168,7 @@ function Login() {
                                     <span className="text-red-600 text-sm mt-1">{iserror}</span>
                                 )}
 
-                                <div className="relative">
+                                <div className="relative mt-2">
                                     <div className="flex items-center gap-2 leading-none mt-2">
                                         <span>รหัสผ่าน</span>
                                         <span className="text-red-600">*</span>
@@ -137,15 +179,19 @@ function Login() {
                                         value={password}
                                         required
                                         onChange={(e) => vaildPassword(e.target.value)}
-                                        className="w-full h-[6vh] rounded-xl border-gray-300 border-2 px-4 mt-2 focus:outline-none focus:ring-2 focus:ring-gray-500 hover:bg-gray-200"
+                                        className={`w-full h-[6vh] rounded-xl ${clickEmailPin ? 'border-red-700' : 'border-gray-300'} border-2 px-4 mt-2 focus:outline-none focus:ring-2 focus:ring-gray-500 hover:bg-gray-200`}
                                         placeholder="รหัสผ่าน"
                                     />
 
                                     {passwordError && (
                                         <span className="text-red-600 text-sm mt-1">{passwordError}</span>
                                     )}
+
+                                    {clickEmailPin && (
+                                        <span className="text-red-600 text-sm mt-1">{clickEmailPin}</span>
+                                    )}
                                     
-                                    <button className="absolute right-3 top-[4.8vh] -translate-y-1/2 text-gray-400"
+                                    <button className="absolute right-3 top-10 text-gray-400"
                                         onClick={() => setSee(!see)}
                                     >
                                         {see ? <FaEyeSlash /> : <FaEye />}
