@@ -34,6 +34,20 @@ function Login() {
     };
 
     const [isusePhone, setIsUsePhone] = useState(true);
+    const [iserrornumphone, setIsErrorNumPhone] = useState("");
+    const vaildPhone = (value) => {
+        const digital = value.replace(/[^0-9]/g,'').slice(0,10);
+        let formatted = digital;
+    
+        if (digital.length >= 7) {
+            formatted = digital.slice(0, 3) + '-' + digital.slice(3, 6) + '-' + digital.slice(6);
+        }
+        else if (digital.length >= 4) {
+            formatted = digital.slice(0, 3) + '-' + digital.slice(3)
+        }
+        setPhonenum(formatted);
+    };
+    
     const [chooseGmail, setChooseGmail] = useState(false);
 
     const handleLogin = () => {
@@ -75,15 +89,15 @@ function Login() {
 
                                 <input type="tel" 
                                     value={phonenum}
-                                    maxLength={10}
-                                    onChange={(e) => {const value = e.target.value.replace(/[^0-9]/g,''); setPhonenum(value)}}
+                                    maxLength={12}
+                                    onChange={(e) => vaildPhone(e.target.value)}
                                     required
                                     className="w-full h-[6vh] rounded-xl border-gray-300 border-2 px-4 mt-2 focus:outline-none focus:ring-2 focus:ring-gray-500 hover:bg-gray-200"
                                     placeholder="กรอกเบอร์โทรศัพท์" />
                                 
                                 <button
                                     className={`w-full h-[6vh] rounded-full font-medium 
-                                    ${phonenum ? 'bg-red-600 hover:opacity-80 text-white' : 'bg-gray-300 cursor-not-allowed text-gray-400' } mt-4 transition-colors duration-200`}
+                                    ${phonenum || !vaildPhone ? 'bg-red-600 hover:opacity-80 text-white' : 'bg-gray-300 cursor-not-allowed text-gray-400' } mt-4 transition-colors duration-200`}
                                     onClick={handleLogin}
                                     disabled={!phonenum}
                                 >
