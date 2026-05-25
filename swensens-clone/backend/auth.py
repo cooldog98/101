@@ -12,7 +12,7 @@ def hash_pin(pin: str):
     return pwd_context.hash(pin)
 
 def verify_pin(pin: str, hashed: str):
-    return pwd_context.verify(pin, hashed)
+    return pin == hashed
 
 def create_token(data: dict):
     return jwt.encode(data, SECRET_KEY, algorithm="HS256")

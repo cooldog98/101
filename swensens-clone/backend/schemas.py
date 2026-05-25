@@ -14,3 +14,7 @@ class LoginRequest(BaseModel):
     phone: Optional[str] = None
     email: Optional[str] = None
     pin: Optional[str] = None
+
+class ResetPinRequest(BaseModel):
+    phone: str
+    new_pin: str

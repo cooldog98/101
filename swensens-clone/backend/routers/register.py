@@ -3,14 +3,16 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models import User
 from schemas import RegisterRequest
-from auth import hash_pin
 
 router = APIRouter()
 
 @router.post("/register")
 def register(data: RegisterRequest, db: Session = Depends(get_db)):
     existing_phone = db.query(User).filter(User.phone == data.phone).first()
-    existing_email = db.query(User).filter(User.email == data.email).first()
+    existing_email = None
+
+    if data.email:
+        existing_email = db.query(User).filter(User.email == data.email).first()
 
     if existing_phone:
         return {"success": False, "message": "เบอร์นี้มีผู้ใช้แล้ว"}
@@ -25,7 +27,7 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
         email=data.email or None,
         birthday=data.birthday,
         gender=data.gender,
-        pin=hash_pin(data.pin)
+        pin=data.pin
     )
     db.add(user)
     db.commit()

@@ -10,4 +10,4 @@ class User(Base):
     email = Column(String(100))
     birthday = Column(Date)
     gender = Column(String(10))
-    pin = Column(String(255))
+    pin = Column(String(6))

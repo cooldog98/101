@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import login, register, check
+from routers import login, register, check, reset
 from database import Base, engine
 
 Base.metadata.create_all(bind=engine)
@@ -18,3 +18,4 @@ app.add_middleware(
 app.include_router(register.router)
 app.include_router(login.router)
 app.include_router(check.router)
+app.include_router(reset.router)
