@@ -1,8 +1,4 @@
-# Swensen's Clone 🍦
-
-เว็บไซต์สั่งไอศกรีม Swensen's จำลอง สร้างด้วย React + Vite + Tailwind CSS
-
----
+# Swensen's Clone
 
 ## Tech Stack
 
@@ -21,7 +17,7 @@
 
 ### ขั้นตอน
 
-\`\`\`bash
+```bash
 # 1. Clone โปรเจกต์
 git clone https://github.com/your-username/swensens-clone.git
 cd swensens-clone
@@ -32,26 +28,18 @@ npm install
 # 3. ติดตั้ง packages เพิ่มเติม
 npm install react-router-dom
 npm install react-icons
-\`\`\`
+```
 
 ---
 
 ## การรัน
 
-\`\`\`bash
 # Frontend
+```bash
 npm run dev
-\`\`\`
+```
 
 เปิดเบราว์เซอร์ที่ \`http://localhost:5173\`
-
-\`\`\`bash
-# Build สำหรับ Production
-npm run build
-
-# Preview Production build
-npm run preview
-\`\`\`
 
 ---
 
