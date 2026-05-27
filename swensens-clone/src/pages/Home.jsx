@@ -21,7 +21,6 @@ function Home() {
   const categories = [
     "ฟรุตตี้ ช็อกโก ป๊อบส์",
     "ใหม่ ไอศกรีมทุเรียนหมอนทอง",
-    "Mini Quart รสชาติพิเศษ เฉพาะช่วงนี้เท่านั้น!",
     "ไอศกรีมเค้ก",
     "ไอศกรีมควอท (450g)",
     "ไอศกรีมมินิ ควอท (250g)",
@@ -52,7 +51,7 @@ function Home() {
     "ไอศกรีมควอท (450g)": [
         { id: 13, image: "/450g/1.jpg", price: "369", name: "ไอศกรีมควอท" },
     ],
-    "ไอศกรีมมินิ ควอท (250g))": [
+    "ไอศกรีมมินิ ควอท (250g)": [
       { id: 14, image: "/250g/1.jpg", price: "239", name: "ไอศกรีม มินิ ควอท" },
     ],
     "ไอศกรีมสกู๊ป": [
@@ -154,7 +153,7 @@ function Home() {
         {categories.map((category) => (
           <button
             key={category}
-            onClick={() => setSelect(category === select ? "ไอศกรีมเค้ก" : category)}
+            onClick={() => setSelect(category)}
             className={`px-4 py-2 rounded-xl border trasition-olors duration-200 whitespace-nowrap
                 ${select === category ? "border-red-600 text-red-600 bg-red-100" : "border-gray-300 text-gray-600 hover:border-gray-400"}`}
           >
@@ -164,26 +163,27 @@ function Home() {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 px-4 mt-6">
-        {(products[select] ||[]).map((item) => (
-          <div key={item.id} className="group bg-white rounded-2xl shadow-sm overflow-hidden cursor-pointer">
-            <div className="relative">
-              <img src={item.image} alt={item.name} className="w-full h-48 object-cover" />
-              <button className="lg:hidden absolute bottom-3 right-3 bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-xl">
-                  +
-              </button>
-            </div>
+        {(products[select] || []).map((item) => (
+            <div key={item.id} className="group bg-white rounded-2xl shadow-sm overflow-hidden cursor-pointer">
+                <div className="relative">
+                    <img src={item.image} alt={item.name} className="w-full h-48 object-cover" />
+                    <button className="lg:hidden absolute bottom-3 right-3 bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-xl">
+                        +
+                    </button>
+                </div>
 
-            <div className="p-3 lg:group-hover:bg-white/80 lg:group-hover:backdrop-blur-sm transition-all duration-300">
-              <span className="text-red-600 font-bold">฿ {item.price}</span>
-              <p className="text-sm mt-1">{item.name}</p>
-              <div className="absolute inset-0 bg-white/70 opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 rounded-b-2xl" />
-              <button className="relative z-10 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 hidden lg:flex w-full mt-3 bg-red-600 text-white py-2 rounded-full items-center justify-center font-medium">                  ดูรายละเอียด
-              </button>
+                <div className="relative p-3">
+                    <div className="pointer-events-none absolute inset-0 bg-white/40 opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 rounded-b-2xl" />
+                    
+                    <span className="relative z-10 text-red-600 font-bold">฿ {item.price}</span>
+                    <p className="relative z-10 text-sm mt-1">{item.name}</p>
+                    <button className="relative z-10 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 hidden lg:flex w-full mt-3 bg-red-600 text-white py-2 rounded-full items-center justify-center font-medium">
+                        ดูรายละเอียด
+                    </button>
+                </div>
             </div>
-          </div>
         ))}
       </div>
-
     </div>
   )
 }
