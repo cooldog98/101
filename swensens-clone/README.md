@@ -43,11 +43,6 @@ npm install react-icons
 npm run dev
 \`\`\`
 
-\`\`\`bash
-# Backend
-uvicorn main:app --reload
-\`\`\`
-
 เปิดเบราว์เซอร์ที่ \`http://localhost:5173\`
 
 \`\`\`bash
@@ -62,29 +57,37 @@ npm run preview
 
 ## Backend (API)
 
+### ติดตั้ง
+
+```bash
+cd backend
+pip install fastapi uvicorn sqlalchemy python-jose passlib bcrypt python-dotenv
+```
+
+### ตั้งค่า .env
+
+```env
+DATABASE_URL=mysql+pymysql://user:password@localhost/dbname
+SECRET_KEY=your_secret_key
+```
+
+### รัน
+
+```bash
+uvicorn main:app --reload
+```
+
 โปรเจกต์นี้ต้องการ Backend API ที่ \`http://127.0.0.1:8000\` โดยมี endpoints ดังนี้:
+
+### Endpoints
 
 | Method | Endpoint | คำอธิบาย |
 |--------|----------|-----------|
-| POST | \`/login\` | เข้าสู่ระบบ |
-| GET | \`/check-phone/:phone\` | ตรวจสอบเบอร์โทรศัพท์ |
-| POST | \`/reset-pin\` | รีเซ็ต PIN |
-
----
-
-## โครงสร้างโปรเจกต์
-
-\`\`\`
-src/
-├── components/
-│   ├── Navbar.jsx
-│   └── Footer.jsx
-├── pages/
-│   ├── Home.jsx
-│   └── Login.jsx
-├── hooks/
-│   └── useAuth.js
-└── App.jsx
-\`\`\`
+| POST | `/register` | สมัครสมาชิก |
+| POST | `/login` | เข้าสู่ระบบด้วยเบอร์+PIN หรืออีเมล+รหัสผ่าน |
+| GET | `/check-phone/:phone` | ตรวจสอบว่าเบอร์มีในระบบ |
+| GET | `/check-email/:email` | ตรวจสอบว่าอีเมลมีในระบบ |
+| POST | `/reset-pin` | รีเซ็ต PIN |
+| GET | `/users` | ดึงข้อมูล users ทั้งหมด |
 
 ---
