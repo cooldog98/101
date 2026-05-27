@@ -11,3 +11,4 @@ class User(Base):
     birthday = Column(Date)
     gender = Column(String(10))
     pin = Column(String(6))
+    point = Column(Integer, default=0)

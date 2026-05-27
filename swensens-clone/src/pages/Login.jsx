@@ -6,7 +6,7 @@ import { IoMdMail } from "react-icons/io";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Footer from "../components/Footer";
 import { MdLock } from "react-icons/md";
-import { set } from "date-fns";
+import { useLocation } from "react-router-dom";
 
 const PinInput = ({label, seePin, onChange, isError, hasError, rounded}) => {
     const [pin, setPin] = useState(Array(6).fill(''));
@@ -77,6 +77,8 @@ const PinInput = ({label, seePin, onChange, isError, hasError, rounded}) => {
 }
 
 function Login() {
+    const location = useLocation();
+    const startStep = location.state?.step ?? 1;
     const navigate = useNavigate();
     const [phonenum, setPhonenum] = useState("");
 
@@ -141,7 +143,8 @@ function Login() {
             const data = await res.json();
 
             if (data.success) {
-                localStorage.setItem('token', data.token)
+                localStorage.setItem('token', data.token);
+                localStorage.setItem("point", data.point);
                 console.log('Login successful:', data);
                 navigate('/');
             }
@@ -175,7 +178,7 @@ function Login() {
     }, []);
 
     const [step, setStep] = useState(() => {
-        return parseInt(sessionStorage.getItem('loginStep') || '1');
+        return location.state?.step ?? parseInt(sessionStorage.getItem('loginStep') || '1');
     });
     
     const gotoStep = (n) => {

@@ -17,13 +17,13 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
             return {"success": False, "message": "คุณกรอกเบอร์โทรศัพท์หรือรหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง"}
         
         token = create_token({"id": user.id, "phone": user.phone, "name": user.name})
-        return {"success": True, "token": token}
+        return {"success": True, "token": token, "point": user.point}
     
     elif data.email:
         user = db.query(User).filter(User.email == data.email).first()
         if not user or not verify_pin(data.pin, user.pin):
             return {"success": False, "message": "คุณกรอกอีเมลหรือรหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง"}
         token = create_token({"id": user.id, "email": user.email, "name": user.name})
-        return {"success": True, "token": token}
+        return {"success": True, "token": token, "point": user.point}
     
     return {"success": False, "message": "กรุณากรอกเบอร์โทรศัพท์หรืออีเมล"}

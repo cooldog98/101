@@ -8,5 +8,6 @@ export const useAuth = () => {
         return { isLoggedIn: false, user: null };
     }
     const user = jwtDecode(token);
-    return { isLoggedIn: true, user };
+    const points = localStorage.getItem("point") || 0;
+    return { isLoggedIn: true, user: { ...user, points } };
 }
